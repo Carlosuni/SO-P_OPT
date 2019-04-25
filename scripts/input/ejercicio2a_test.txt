@@ -1,0 +1,9 @@
+Asignatura de Sistemas Operativos
+Práctica Opcional de Shell Scripts
+Fecha: 24/04/19
+Archivo de prueba como entrada para Ejercicio_2a
+Se "traduce"
+Se ordena
+Se eliminan valores duplicados
+Se ordena inverso
+Se muestra la cabeza (primeros elementos)

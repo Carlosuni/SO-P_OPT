@@ -1,0 +1,12 @@
+-> 2.a
+    El propósito del script es analizar el texto de un archivo de entrada y mostrar las n palabras mas repetidas en él.
+    tr: convierte los caracteres no alfanuméricos (alnum) de un archivo de entrada pasado como parámetro número $1 en \n, es decir, saltos de línea
+    sort: ordena los resultados alfabéticamente por defecto
+    uniq: coge los resultados únicos, eliminando los repetidos, y listando un contador (c) con el número de ocurrencias de cada una
+    sort -nr: ordena inversamente (r) según el valor numérico (n) del contador de ocurrencias, es decir, de la ocurrencia que mas veces aparece a la que menos
+    head: escoge los x elementos de la cabeza, siendo x introducida con el parámetro $2. En este caso, el caso del primer elemento, corresponde al valor 6 del contador de ocurrencias de "\n", el salto de línea.
+
+-> 5.a
+
+-> 5.a
+
