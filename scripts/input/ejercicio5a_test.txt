@@ -1,0 +1,36 @@
+Asignatura de Sistemas Operativos
+Práctica Opcional de Shell Scripts
+Fecha: 24/04/19
+a) Que ha pasado de ocupar 1,1 kB a 36,9 MB, habiéndo rellenado el simulador de descompresión con caracteres aleatorios de compresión
+b) El exit 0; es necesario para finalizar el proceso tras la "animación" de descompresión y volver a la escritura en terminal
+   El 2>&1 sirve para enviar la salida stderr al mismo sitio donde salga la salida stdout. De esta manera, un error saldrá por el dialog, a donde apunta la salida stdout
+   Las líneas de código hacen lo siguiente:
+   # Lanza un diálogo de una checklist con las distintas opciones
+   WHAT=$(dialog --backtitle $0 --output-fd 1 --checklist 'Select items to uncompress:\n\nSPACE: check/uncheck     TAB: changes focus     INTRO: accept\nMouse can also be used, if supported by your terminal emulator.' 16 76 26 README 'Read this before doing anything else' off ChangeLog 'History of changes' off usr/include/ 'C/C++ headers' off usr/share/backgrounds/ 'Backgrounds for X desktop environments' off usr/share/pixmaps/ 'X11 pixmaps' off usr/share/man/ 'Manual pages' off)
+   SIZE=$(stat --printf=%s $0)
+   # Si se selecciona alguna opción (*), se simula una barra de progreso de la descompresión del archivo codificado según el tamaño generado con el archivo repackage
+   if [ -n "$WHAT" ]; then
+     (tail -n +8 $0 | pv -n -s $SIZE -i 0.25 | base64 -d | tar -xzf - $WHAT) 2>&1 | dialog --gauge 'Uncompressing...' 8 46
+   fi
+   exit 0; 
+c) Ver código de exercise5.share
+d) A continuación se describe el código de exercise5_repackage.sh
+    # Esta funcion comprime y guarda a un futuro archivo (exercise5.sh) el contenido del pv de esa acción codificada en base 64
+    function add_archive() { T=$1; shift;
+			 tar -czf - "$@" 2>/dev/null | base64 | pv -i 0.25 >> $T; }
+    # Esta función extrae los últimos elementos             
+    function extract()     { tail -n +8 $1 | base64 -d | tar -C $2 -xzf -; }
+    # Esta función trunca mediante un stream editor
+    function truncate()    { sed -ni 1,7p $1; }
+
+    # Crea un fuchero temporal y fija el destino de en el exercise5.sh
+    TMP=`mktemp -d`
+    DEST=./exercise5.sh
+
+    # Extrae el arhivo temporal, lo trunca, lo añade al exercise5.sh y borra el temporal
+    echo "Repackaging \`${DEST}'...  This may take some time." 
+    extract     $DEST $TMP
+    truncate    $DEST
+    add_archive $DEST -C / --transform=s_${TMP:1}/__ $TMP/{README,ChangeLog} \
+            usr/include/ usr/share/{backgrounds,pixmaps,man}
+    rm -fr "$TMP"
